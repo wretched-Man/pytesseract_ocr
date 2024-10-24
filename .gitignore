@@ -1,0 +1,4 @@
+.venv
+thayer_pdfs
+*.jpg
+pytess*.py
