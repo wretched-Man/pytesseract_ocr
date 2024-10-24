@@ -1,4 +1,13 @@
+# python venv
 .venv
+
+#folders
 thayer_pdfs
+output_text
+
+#images
 *.jpg
+
+# test files
 pytess*.py
+*.jpg.txt

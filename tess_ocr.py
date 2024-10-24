@@ -1,5 +1,5 @@
-# Image OCR, V1,
-# Input image manually
+# Image OCR, V2,
+# Input multiple images
 import pytesseract
 import cv2
 import numpy as np
@@ -39,11 +39,11 @@ def tesseract_ocr(img):
     for line in lines:
         if "|" in line:
             right += line.split("|")[-1]
-            for splitted in line.split("|")[-1:]:
+            for splitted in line.split("|")[:-1]:
                 left += splitted
         elif "-" in line:
             right += line.split("-")[-1]
-            for splitted in line.split("|")[-1:]:
+            for splitted in line.split("|")[:-1]:
                 left += splitted
         else:
             left += line
@@ -53,21 +53,31 @@ def tesseract_ocr(img):
     left += "\n\n --RIGHT-- \n\n"
     return left+right
 
+def main():
+    import glob
+    image_names = sorted(glob.glob("./thayer_pdfs/*"))
 
-filename = "pg22.jpg"
-img_cv = cv2.imread(filename)
-img_resize = cv2.resize(img_cv, None, None, .25, .25, cv2.INTER_AREA)
-img_gray = cv2.cvtColor(img_resize, cv2.COLOR_BGR2GRAY)
+    filepath = "output_text/"
 
+    for name in image_names:
+        img_cv = cv2.imread(name)
+        img_resize = cv2.resize(img_cv, None, None, .25, .25, cv2.INTER_AREA)
+        img_gray = cv2.cvtColor(img_resize, cv2.COLOR_BGR2GRAY)
 
-# pre process
-x, y, w, h = pre_process(img_gray)
+        # pre process
+        x, y, w, h = pre_process(img_gray)
 
-# extract main contour
-main_contour = img_cv[y:y+h, x:x+w].copy()
+        # extract main contour
+        main_contour = img_cv[y:y+h, x:x+w].copy()
 
-string = tesseract_ocr(main_contour)
+        string = tesseract_ocr(main_contour)
 
-if len(string) > 0:
-    with open(filename+'.txt', "w") as f:
-        f.write(string)
+        if len(string) > 0:
+            base_name = name.split('/')[-1].split('.')[0]
+            filename = filepath + base_name.lower().replace(' ', '_')
+            with open(filename+'.txt', "w") as f:
+                f.write(string)
+    return 0
+
+if __name__ == '__main__':
+    main()
