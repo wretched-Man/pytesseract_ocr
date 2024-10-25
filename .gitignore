@@ -4,10 +4,12 @@
 #folders
 thayer_pdfs
 output_text
+out_trans
+__pycache__
 
 #images
 *.jpg
 
 # test files
 pytess*.py
-*.jpg.txt
+pg*.txt
